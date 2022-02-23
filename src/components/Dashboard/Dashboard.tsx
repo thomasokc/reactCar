@@ -1,92 +1,169 @@
-import React from "react";
-import { color, styled } from '@mui/system';
-import {Button} from '@mui/material';
-import {Link} from 'react-router-dom';
-import cobra_car from '../../assets/images/cobra_car.jpg';
+import React, { useState} from "react"; // useState is a react hook
+import {
+    Drawer as MUIDrawer,
+    ListItem,
+    List,
+    ListItemText,
+    AppBar,
+    Toolbar,
+    IconButton,
+    Typography,
+    Divider,
+    Button,
+    Box,
+    CssBaseline
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import { ChevronRight, ChevronLeft } from '@mui/icons-material';
+import { useNavigate } from "react-router-dom";
+import {theme } from '../../Theme/themes';
+import { DataTable } from '../../components';
+import { color } from "@mui/system";
 
-interface Props{
-    section: string;
-}
 
-const Root = styled('div')({
-    padding: 0,
-    margin: 0
-})
-const NavbarContainer = styled('div')({
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: 'black'
-})
-const Logo = styled('h1')({
-    margin: '0 0 0.45em'
-})
-const LogoA = styled(Link)({
-    color: 'white',
-    listStyle: 'none',
-    textTransform: 'uppercase',
-    textDecoration: 'none',
-    display: 'flex',
-    fontFamily: 'sans-serif'
-})
-const LogoNavigation = styled('ul')({
-    listStyle: 'none',
-    textTransform: 'uppercase',
-    textDecoration: 'none',
-    display: 'flex'
-})
-const NavA = styled(Link)({
-    display:'block',
-    padding: '1em',
-    color: 'white',
-    textDecoration: 'none'
-})
-const Main = styled('main')( {
-    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${cobra_car});`, // Image here
-    width: '100%',
-    height: '100%',
-    backgroundSize: 'cover',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center',
-    position: 'absolute',
-})
+const drawerWidth = 240;
 
-const MainText = styled('div')({
-    textAlign: 'center',
-    position: 'relative',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    color: 'white',
-    fontFamily: 'sans-serif'
-})
+const myStyles = {
+    appBar : {
+          backgroundColor: theme.palette.grey[900],
+          transition: theme.transitions.create(['margin', 'width'], {
+          easing: theme.transitions.easing.sharp,
+          duration: theme.transitions.duration.leavingScreen,
+        }),
+    },
+    appBarShift: {
+      backgroundColor: theme.palette.grey[900],
+      width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: drawerWidth,
+      transition: theme.transitions.create(['margin', 'width'], {
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+    },
+    menuButton: {
+      marginRight: theme.spacing(2),
+    },
+    hide: {
+      display: 'none',
+    },
+    drawer: {
+      width: drawerWidth,
+      flexShrink: 0
+    },
+    drawerPaper: {
+      width: drawerWidth,
+    },
+    drawerHeader: {
+      display: 'flex',
+      width: drawerWidth,
+      alignItems: 'center',
+      padding: theme.spacing(0, 1),
+      // necessary for content to be below app bar
+      ...theme.mixins.toolbar,
+      justifyContent: 'flex-end',
+    },
+    content: {
+      flexGrow: 1,
+      padding: theme.spacing(3),
+      transition: theme.transitions.create('margin', {
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen,
+      }),
+      marginLeft: 0,
+    },
+    contentShift: {
+      transition: theme.transitions.create('margin', {
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.enteringScreen,
+      }),
+      marginLeft: 0,
+    },
+    toolbar:{
+      display: 'flex',
+    },
+    toolbar_button: {
+      marginLeft: 'auto',
+      backgroundColor: theme.palette.grey[800],
+      color: theme.palette.grey[100]
+    }
+};
 
-export const Dashboard = (props:Props) => {
+export const Dashboard = () => {
+    const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
+
+    const handleDrawerOpen = () =>{
+        setOpen(true);
+    }
+
+    const handleDrawerClose = () =>{
+        setOpen(false);
+    }
+
+    const itemsList = [
+        {
+            text: 'Home',
+            onClick: () => navigate('/')
+        },
+        {
+            text: 'Sign In',
+            onClick: () => navigate('/signin')
+        },
+    ]
+
+
     return(
-        <Root>
-            <NavbarContainer>
-                <Logo>
-                    <LogoA to='/'>Tommy's Jalopies</LogoA>
-                </Logo>
-                <LogoNavigation>
-                    <li>
-                        <NavA to='/'>Home</NavA>
-                    </li>
-                    <li>
-                        <NavA to='/Dashboard'>About</NavA>
-                    </li>
-                    <li>
-                        <NavA to='/SignIn'>Learn More</NavA>
-                    </li>
-                </LogoNavigation>
-            </NavbarContainer>
-            <Main>
-                <MainText>
-                    <h1>{props.section}</h1>
-                    <p>In 1807 Einstein discovered the first cave painting of a jalopy in a cave in France, labeled "Kachow"</p>
-                    
-                </MainText>
-            </Main>
-        </Root>
+        <Box sx={{display:'flex'}}>
+            <CssBaseline />
+            <AppBar
+                sx={open ? myStyles.appBarShift : myStyles.appBar}
+                position='fixed'>
+                    <Toolbar sx ={myStyles.toolbar}>
+                        <IconButton
+                           color='inherit' 
+                           aria-label = 'open drawer'
+                           onClick={handleDrawerOpen}
+                           edge='start'
+                           sx={open ? myStyles.hide : myStyles.menuButton}>
+                               <MenuIcon />
+                        </IconButton>
+                        <Typography variant="h6">Manage</Typography>
+                        <Button sx={myStyles.toolbar_button}>Purchase a new jalopy</Button>
+                    </Toolbar>
+            </AppBar>
+            <MUIDrawer
+                sx={ open ? myStyles.drawer : myStyles.hide}
+                variant='persistent'
+                anchor='left'
+                open={open}
+                // Double brackets for objects, objects above are different for some reason
+                style={{width: drawerWidth}}>  
+                    <Box sx={myStyles.drawerHeader}>
+                        <IconButton onClick={handleDrawerClose}>
+                            {theme.direction === 'ltr' ? <ChevronLeft/> : <ChevronRight/>}
+                        </IconButton>
+                    </Box>
+                    <Divider />
+                    <List>
+                        { itemsList.map( (item,index) => {
+                            const { text, onClick } = item;
+                            return(
+                                <ListItem button key={text} onClick={onClick}>
+                                    <ListItemText primary = {text}/>
+                                </ListItem>
+                            )
+                        })}
+                    </List>
+
+            </MUIDrawer>
+            <Box sx={myStyles.content}>
+                <Box sx={myStyles.drawerHeader}>
+                </Box>
+                <h1>Jalopies for as far as your headlights can see...</h1>
+                <DataTable/>
+            </Box>
+        </Box>
     )
 }
+
+// Datable goes under h1, check in class work
